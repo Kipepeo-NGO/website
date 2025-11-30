@@ -143,6 +143,9 @@ const infoRequestStatusSchema = z.object({
 
 adminRouter.patch('/info-requests/:id/status', async (req: AuthenticatedRequest, res) => {
   const { id } = req.params;
+  if (!id) {
+    return res.status(400).json({ message: 'ID requerido' });
+  }
   const parsed = infoRequestStatusSchema.safeParse(req.body);
   if (!parsed.success) {
     return res.status(400).json({ message: 'Datos inválidos', issues: parsed.error.flatten() });
@@ -150,7 +153,7 @@ adminRouter.patch('/info-requests/:id/status', async (req: AuthenticatedRequest,
   const nextStatus = parsed.data.status;
   try {
     const updated = await prisma.infoRequest.update({
-      where: { id },
+      where: { id: String(id) },
       data:
         nextStatus === InfoRequestStatus.RESPONDED
           ? { status: nextStatus, respondedAt: new Date(), respondedById: req.user!.id }

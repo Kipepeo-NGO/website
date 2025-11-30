@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { z } from 'zod';
+import { DonationStatus } from '@prisma/client';
 import { prisma } from '../lib/prisma';
 import { verifyToken } from '../utils/jwt';
 
@@ -36,19 +37,20 @@ donationRouter.post('/', async (req, res) => {
         // token inválido: continuamos sin asociar usuario
       }
     }
-    const donation = await prisma.donation.create({
-      data: {
-        donorName: payload.donorName,
-        email: payload.email ?? null,
-        amount,
-        currency: payload.currency ?? 'EUR',
-        project: payload.project ?? null,
-        method: payload.method ?? null,
-        message: payload.message ?? null,
-        status: payload.status ?? 'CONFIRMED',
-        userId: userId ?? undefined,
-      },
-    });
+    const donationData: any = {
+      donorName: payload.donorName,
+      email: payload.email ?? null,
+      amount,
+      currency: payload.currency ?? 'EUR',
+      project: payload.project ?? null,
+      method: payload.method ?? null,
+      message: payload.message ?? null,
+      status: (payload.status as DonationStatus | undefined) ?? DonationStatus.CONFIRMED,
+    };
+    if (userId) {
+      donationData.userId = userId;
+    }
+    const donation = await prisma.donation.create({ data: donationData });
     return res.status(201).json({ ok: true, id: donation.id });
   } catch (error) {
     console.error('Donation error', error);
