@@ -18,10 +18,6 @@ export default function HomePage({ meta }: { meta?: any }) {
                 Desde Tanzania, una mariposa alzó el vuelo. Su nombre es Kipepeo, y su misión: transformar vidas a través de la educación,
                 el cariño y las segundas oportunidades.
               </p>
-              <div className="pill-tabs">
-                <button style={{ background: 'var(--brand-primary)', color: '#fff' }}>Voluntariado en Tanzania</button>
-                <button style={{ color: 'var(--brand-primary)' }}>Voluntariado desde casa</button>
-              </div>
               <div className="flex flex-wrap gap-3">
                 <Link to="/colabora/dona-ahora" className="btn-primary">
                   Dona ahora

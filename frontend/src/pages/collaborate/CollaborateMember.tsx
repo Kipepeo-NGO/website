@@ -9,18 +9,14 @@ const benefits = [
   'La satisfacción de saber que tu aportación rompe ciclos de pobreza y abre oportunidades educativas reales.',
 ];
 
-const paymentMethods = ['Domiciliación bancaria', 'Transferencia', 'Tarjeta', 'PayPal'];
-
 export default function CollaborateMember({ meta }: { meta?: any }) {
   const sectionId = 'colabora-ser-socio';
   useSectionScroll(sectionId);
 
-  const [fullName, setFullName] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
-  const [quota, setQuota] = useState('mensual');
-  const [payment, setPayment] = useState(paymentMethods[0].toLowerCase());
-  const [message, setMessage] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [feedback, setFeedback] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -30,8 +26,6 @@ export default function CollaborateMember({ meta }: { meta?: any }) {
     setSubmitting(true);
     setFeedback(null);
     setError(null);
-    const [firstName, ...rest] = fullName.trim().split(' ');
-    const lastName = rest.join(' ') || firstName;
     try {
       await apiFetch('/applications/member', {
         method: 'POST',
@@ -40,18 +34,13 @@ export default function CollaborateMember({ meta }: { meta?: any }) {
           lastName,
           email,
           phone,
-          contributionType: quota,
-          paymentMethod: payment,
-          message,
         }),
       });
       setFeedback('Solicitud de socio enviada. Te contactaremos por email.');
-      setFullName('');
+      setFirstName('');
+      setLastName('');
       setEmail('');
       setPhone('');
-      setMessage('');
-      setQuota('mensual');
-      setPayment(paymentMethods[0].toLowerCase());
     } catch (err: any) {
       setError(err?.message || 'No pudimos enviar tu solicitud. Inténtalo otra vez.');
     } finally {
@@ -80,6 +69,10 @@ export default function CollaborateMember({ meta }: { meta?: any }) {
           Ser socio/a significa tender puentes entre España y Tanzania, fortaleciendo el intercambio cultural y educativo
           que da vida a nuestra misión diaria.
         </p>
+        <p className="text-lg" style={{ color: 'var(--brand-text)' }}>
+          Primero te registras y revisamos tu solicitud. Cuando la aceptemos, formalizarás la cuota anual mínima de 30€
+          y coordinaremos el método de pago.
+        </p>
         <a
           href="#form-socio"
           className="btn-primary mt-6 inline-flex items-center gap-2"
@@ -106,8 +99,8 @@ export default function CollaborateMember({ meta }: { meta?: any }) {
               💶 Compromiso sugerido
             </p>
             <p style={{ color: 'var(--brand-text)' }}>
-              La cuota mínima anual es de <strong>30 €</strong>, con opción a colaboración mensual o anual según tus
-              posibilidades. Tú eliges el método de pago más cómodo y puedes modificarlo en cualquier momento.
+              La cuota mínima anual es de <strong>30 €</strong>. Una vez aceptemos tu solicitud, coordinaremos el método
+              de pago contigo.
             </p>
           </div>
 
@@ -130,16 +123,29 @@ export default function CollaborateMember({ meta }: { meta?: any }) {
           onSubmit={handleSubmit}
         >
           <div>
-            <label htmlFor="fullName" className="block text-sm font-semibold text-gray-700">
-              Nombre completo
+            <label htmlFor="firstName" className="block text-sm font-semibold text-gray-700">
+              Nombre
             </label>
             <input
-              id="fullName"
+              id="firstName"
               className="w-full border rounded-xl p-3 mt-1"
-              placeholder="Tu nombre y apellidos"
+              placeholder="Tu nombre"
               required
-              value={fullName}
-              onChange={(event) => setFullName(event.target.value)}
+              value={firstName}
+              onChange={(event) => setFirstName(event.target.value)}
+            />
+          </div>
+          <div>
+            <label htmlFor="lastName" className="block text-sm font-semibold text-gray-700">
+              Apellidos
+            </label>
+            <input
+              id="lastName"
+              className="w-full border rounded-xl p-3 mt-1"
+              placeholder="Tus apellidos"
+              required
+              value={lastName}
+              onChange={(event) => setLastName(event.target.value)}
             />
           </div>
           <div>
@@ -158,60 +164,15 @@ export default function CollaborateMember({ meta }: { meta?: any }) {
           </div>
           <div>
             <label htmlFor="phone" className="block text-sm font-semibold text-gray-700">
-              Teléfono (opcional)
+              Teléfono
             </label>
             <input
               id="phone"
               className="w-full border rounded-xl p-3 mt-1"
               placeholder="+34 600 000 000"
+              required
               value={phone}
               onChange={(event) => setPhone(event.target.value)}
-            />
-          </div>
-          <div className="grid gap-4 md:grid-cols-2">
-            <div>
-              <label htmlFor="quota" className="block text-sm font-semibold text-gray-700">
-                Tipo de cuota
-              </label>
-              <select
-                id="quota"
-                className="w-full border rounded-xl p-3 mt-1"
-                value={quota}
-                onChange={(event) => setQuota(event.target.value)}
-              >
-                <option value="mensual">Mensual</option>
-                <option value="anual">Anual</option>
-              </select>
-            </div>
-            <div>
-              <label htmlFor="payment" className="block text-sm font-semibold text-gray-700">
-                Método de pago
-              </label>
-              <select
-                id="payment"
-                className="w-full border rounded-xl p-3 mt-1"
-                value={payment}
-                onChange={(event) => setPayment(event.target.value)}
-              >
-                {paymentMethods.map((method) => (
-                  <option key={method} value={method.toLowerCase()}>
-                    {method}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-          <div>
-            <label htmlFor="message" className="block text-sm font-semibold text-gray-700">
-              Comentarios o mensaje (opcional)
-            </label>
-            <textarea
-              id="message"
-              className="w-full border rounded-xl p-3 mt-1"
-              rows={4}
-              placeholder="Cuéntanos más"
-              value={message}
-              onChange={(event) => setMessage(event.target.value)}
             />
           </div>
           {feedback && (

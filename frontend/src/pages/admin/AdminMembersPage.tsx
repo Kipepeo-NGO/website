@@ -14,6 +14,15 @@ type MemberProfile = {
   createdAt: string;
 };
 
+type Contribution = {
+  id: string;
+  project?: string | null;
+  amount: number;
+  currency: string;
+  status?: 'PENDING' | 'CONFIRMED';
+  createdAt: string;
+};
+
 export default function AdminMembersPage() {
   const { token } = useAuth();
   const [profiles, setProfiles] = useState<MemberProfile[]>([]);
@@ -23,6 +32,8 @@ export default function AdminMembersPage() {
   const [filterStatus, setFilterStatus] = useState('ALL');
   const [selected, setSelected] = useState<MemberProfile | null>(null);
   const [processing, setProcessing] = useState(false);
+  const [contributions, setContributions] = useState<Contribution[]>([]);
+  const [loadingContribs, setLoadingContribs] = useState(false);
 
   const loadData = useCallback(async () => {
     if (!token) return;
@@ -41,6 +52,26 @@ export default function AdminMembersPage() {
   useEffect(() => {
     loadData();
   }, [loadData]);
+
+  useEffect(() => {
+    const loadContribs = async () => {
+      if (!selected || !token) return;
+      setLoadingContribs(true);
+      try {
+        const data = await apiFetch<Contribution[]>(
+          `/admin/member-contributions?email=${encodeURIComponent(selected.email)}`,
+          { token }
+        );
+        setContributions(data);
+      } catch (err) {
+        console.error(err);
+        setContributions([]);
+      } finally {
+        setLoadingContribs(false);
+      }
+    };
+    loadContribs();
+  }, [selected, token]);
 
   const filtered = useMemo(() => {
     const query = search.toLowerCase();
@@ -182,6 +213,60 @@ export default function AdminMembersPage() {
                 <p>
                   <strong>Estado actual:</strong> {selected.status}
                 </p>
+              </div>
+              <div className="space-y-2">
+                <p className="text-sm font-semibold">Contribuciones registradas</p>
+                {loadingContribs ? (
+                  <p className="text-sm text-[color:var(--brand-muted)]">Cargando…</p>
+                ) : contributions.length ? (
+                  <ul className="space-y-2 max-h-48 overflow-auto text-sm">
+                    {contributions.map((item) => (
+                      <li key={item.id} className="flex items-center justify-between gap-2 border border-white/80 rounded-xl px-3 py-2">
+                        <div>
+                          <p className="font-semibold">{item.project || 'Donación'}</p>
+                          <p className="text-[color:var(--brand-muted)]">
+                            {new Date(item.createdAt).toLocaleDateString()} ·{' '}
+                            {item.amount.toLocaleString('es-ES', { style: 'currency', currency: item.currency || 'EUR' })}
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span
+                            className={`text-xs font-semibold ${
+                              item.status === 'PENDING' ? 'text-amber-600' : 'text-emerald-600'
+                            }`}
+                          >
+                            {item.status || 'CONFIRMED'}
+                          </span>
+                          {item.status === 'PENDING' && (
+                            <button
+                              type="button"
+                              className="text-xs px-3 py-1 rounded-full bg-emerald-500 text-white font-semibold"
+                              onClick={async () => {
+                                if (!token) return;
+                                try {
+                                  await apiFetch(`/admin/donations/${item.id}/status`, {
+                                    method: 'PATCH',
+                                    body: JSON.stringify({ status: 'CONFIRMED' }),
+                                    token,
+                                  });
+                                  setContributions((prev) =>
+                                    prev.map((c) => (c.id === item.id ? { ...c, status: 'CONFIRMED' } : c))
+                                  );
+                                } catch (err) {
+                                  alert('No se pudo actualizar el estado.');
+                                }
+                              }}
+                            >
+                              Marcar como done
+                            </button>
+                          )}
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="text-sm text-[color:var(--brand-muted)]">Sin contribuciones registradas.</p>
+                )}
               </div>
               <div className="flex flex-col gap-3 md:flex-row">
                 <button

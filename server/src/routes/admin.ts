@@ -59,25 +59,35 @@ adminRouter.get('/member-profiles', async (_req, res) => {
 });
 
 adminRouter.get('/donations', async (_req, res) => {
+  const mode = (_req.query.mode as string) || 'summary';
   const donations = await prisma.donation.findMany({ orderBy: { createdAt: 'desc' } });
-  const grouped = donations.reduce<Record<string, any>>((acc, donation) => {
-    const key = donation.email || `anon-${donation.id}`;
-    if (!acc[key]) {
-      acc[key] = {
-        donorName: donation.donorName || 'Anónimo',
-        email: donation.email,
-        totalAmount: 0,
-        count: 0,
-        lastDonation: null as Date | null,
-      };
-    }
-    acc[key].totalAmount += donation.amount;
-    acc[key].count += 1;
-    if (!acc[key].lastDonation || donation.createdAt > acc[key].lastDonation) {
-      acc[key].lastDonation = donation.createdAt;
-    }
-    return acc;
-  }, {});
+  if (mode === 'list') {
+    return res.json(
+      donations.map((d) => ({
+        ...d,
+      }))
+    );
+  }
+  const grouped = donations
+    .filter((donation) => donation.status !== 'PENDING')
+    .reduce<Record<string, any>>((acc, donation) => {
+      const key = donation.email || `anon-${donation.id}`;
+      if (!acc[key]) {
+        acc[key] = {
+          donorName: donation.donorName || 'Anónimo',
+          email: donation.email,
+          totalAmount: 0,
+          count: 0,
+          lastDonation: null as Date | null,
+        };
+      }
+      acc[key].totalAmount += donation.amount;
+      acc[key].count += 1;
+      if (!acc[key].lastDonation || donation.createdAt > acc[key].lastDonation) {
+        acc[key].lastDonation = donation.createdAt;
+      }
+      return acc;
+    }, {});
   return res.json(Object.values(grouped));
 });
 
@@ -91,6 +101,40 @@ adminRouter.get('/info-requests', async (_req, res) => {
     },
   });
   return res.json(requests);
+});
+
+adminRouter.get('/member-contributions', async (req, res) => {
+  const { email, userId } = req.query as { email?: string; userId?: string };
+  const where: any = {};
+  if (email) where.email = email as string;
+  if (userId) where.userId = userId as string;
+  const donations = await prisma.donation.findMany({
+    where,
+    orderBy: { createdAt: 'desc' },
+  });
+  return res.json(donations);
+});
+
+const donationStatusSchema = z.object({
+  status: z.enum(['PENDING', 'CONFIRMED']),
+});
+
+adminRouter.patch('/donations/:id/status', async (req, res) => {
+  const { id } = req.params;
+  const parsed = donationStatusSchema.safeParse(req.body);
+  if (!parsed.success) {
+    return res.status(400).json({ message: 'Datos inválidos', issues: parsed.error.flatten() });
+  }
+  try {
+    const updated = await prisma.donation.update({
+      where: { id },
+      data: { status: parsed.data.status },
+    });
+    return res.json(updated);
+  } catch (error) {
+    console.error('Error updating donation status', error);
+    return res.status(500).json({ message: 'No se pudo actualizar la donación' });
+  }
 });
 
 const infoRequestStatusSchema = z.object({

@@ -2,30 +2,14 @@ import { FormEvent, useState } from 'react';
 import { apiFetch } from '@/lib/api';
 import { useSectionScroll } from '@/hooks/useSectionScroll';
 
-const donationTypes = [
-  {
-    title: 'Donación única',
-    description: 'Apoya un proyecto concreto o contribuye al fondo general para cubrir necesidades inmediatas.',
-  },
-  {
-    title: 'Donación mensual',
-    description: 'Garantiza la continuidad y sostenibilidad de los programas educativos y comunitarios.',
-  },
-];
-
-const paymentOptions = ['Tarjeta', 'Transferencia', 'Bizum ONG 06123', 'PayPal'];
-
 export default function CollaborateDonate({ meta }: { meta?: any }) {
   const sectionId = 'colabora-dona';
   useSectionScroll(sectionId);
 
-  const [donorName, setDonorName] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
-  const [amount, setAmount] = useState('');
-  const [project, setProject] = useState('');
-  const [method, setMethod] = useState(paymentOptions[0].toLowerCase());
-  const [dedication, setDedication] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [feedback, setFeedback] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -36,27 +20,26 @@ export default function CollaborateDonate({ meta }: { meta?: any }) {
     setFeedback(null);
     setError(null);
     try {
-      const optionalMessage = [dedication.trim(), phone ? `Tel: ${phone}` : null].filter(Boolean).join(' — ') || undefined;
+      const donorName = `${firstName} ${lastName}`.trim();
+      const message = [`Quiero hacer una donación.`, phone ? `Teléfono: ${phone}` : null]
+        .filter(Boolean)
+        .join(' ');
       await apiFetch('/donations', {
         method: 'POST',
         body: JSON.stringify({
           donorName,
           email,
-          amount: Number(amount),
+          amount: 0,
           currency: 'EUR',
-          project,
-          method,
-          message: optionalMessage,
+          method: 'manual',
+          message,
         }),
       });
-      setFeedback('Donación registrada. Gracias por tu apoyo.');
-      setDonorName('');
+      setFeedback('Solicitud de donación registrada. Te contactaremos para completar el proceso.');
+      setFirstName('');
+      setLastName('');
       setEmail('');
       setPhone('');
-      setAmount('');
-      setProject('');
-      setMethod(paymentOptions[0].toLowerCase());
-      setDedication('');
     } catch (err: any) {
       setError(err?.message || 'No pudimos registrar la donación.');
     } finally {
@@ -77,12 +60,11 @@ export default function CollaborateDonate({ meta }: { meta?: any }) {
           {meta?.h1}
         </h1>
         <p className="text-lg mt-4" style={{ color: 'var(--brand-text)' }}>
-          Cada donación cuenta. Gracias a ti seguimos ofreciendo educación de calidad, becas escolares, materiales,
-          formación docente y bienestar comunitario.
+          Puedes donar sin registrarte o, si lo prefieres, unirte a la familia Kipepeo para seguir el impacto de cerca.
+          Tú eliges cómo participar.
         </p>
         <p className="text-lg" style={{ color: 'var(--brand-text)' }}>
-          No importa el importe: cada contribución transforma una vida y ayuda a que más niñas y niños puedan estudiar,
-          crecer y soñar.
+          Cada aportación sostiene becas, alimentación, internado, materiales y formación docente en Kipepeo.
         </p>
         <a href="#form-donar" className="btn-primary mt-6 inline-flex items-center gap-2">
           Dona ahora
@@ -93,26 +75,46 @@ export default function CollaborateDonate({ meta }: { meta?: any }) {
         <div className="space-y-6">
           <div className="card space-y-3">
             <p className="text-sm font-semibold uppercase tracking-[0.2em]" style={{ color: 'var(--brand-primary)' }}>
-              💝 Tipos de donación
+              💝 Cómo donar sin registrarte
             </p>
-            <ul className="space-y-3" style={{ color: 'var(--brand-text)' }}>
-              {donationTypes.map((type) => (
-                <li key={type.title}>
-                  <p className="font-semibold" style={{ color: 'var(--brand-text)' }}>
-                    {type.title}
-                  </p>
-                  <p style={{ color: 'var(--brand-muted)' }}>{type.description}</p>
-                </li>
-              ))}
+            <ul className="space-y-3 text-base" style={{ color: 'var(--brand-text)' }}>
+              <li>
+                <p className="font-semibold">Bizum</p>
+                <p className="font-mono text-sm">Código ONG: 12985</p>
+              </li>
+              <li>
+                <p className="font-semibold">PayPal</p>
+                <a
+                  href="https://www.paypal.com/ncp/payment/5J5BL2VJF2NTE"
+                  className="text-[color:var(--brand-primary)] underline"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  https://www.paypal.com/ncp/payment/5J5BL2VJF2NTE
+                </a>
+              </li>
+              <li>
+                <p className="font-semibold">Transferencia bancaria</p>
+                <div className="space-y-1 text-sm">
+                  <p className="font-mono">IBAN: ES62 2100 4735 3702 0018 8894</p>
+                  <p className="font-mono">BIC: CAIXESBBXXX</p>
+                  <p>Titulares: Asoc Kipepeo</p>
+                </div>
+              </li>
             </ul>
           </div>
 
-          <div className="card space-y-2 text-sm" style={{ color: 'var(--brand-text)' }}>
-            <p className="text-xs uppercase tracking-[0.3em]" style={{ color: 'var(--brand-muted)' }}>
-              Datos bancarios
+          <div className="card space-y-3">
+            <p className="text-sm font-semibold uppercase tracking-[0.2em]" style={{ color: 'var(--brand-primary)' }}>
+              🦋 Únete a la familia Kipepeo
             </p>
-            <p className="font-mono text-base">IBAN: ES12 3456 7890 1234 5678 9012 · Concepto: DONACIÓN KIPEPEO</p>
-            <p className="font-mono text-base">Bizum ONG: 06123 · PayPal: paypal.me/kipepeo</p>
+            <p style={{ color: 'var(--brand-text)' }}>
+              Si quieres seguir el impacto, recibir actualizaciones y formar parte de la comunidad, puedes registrarte
+              como donante y te informaremos de todo.
+            </p>
+            <a href="/colabora/ser-socio" className="btn-secondary inline-flex w-fit">
+              Hazte socio/a
+            </a>
           </div>
 
           <div className="card space-y-3">
@@ -133,17 +135,31 @@ export default function CollaborateDonate({ meta }: { meta?: any }) {
           onSubmit={handleSubmit}
         >
           <div>
-            <label htmlFor="donorName" className="block text-sm font-semibold text-gray-700">
-              Nombre completo
+            <label htmlFor="firstName" className="block text-sm font-semibold text-gray-700">
+              Nombre
             </label>
             <input
-              id="donorName"
+              id="firstName"
               className="w-full border rounded-xl p-3 mt-1"
-              placeholder="Nombre o entidad"
+              placeholder="Tu nombre"
               autoComplete="name"
               required
-              value={donorName}
-              onChange={(event) => setDonorName(event.target.value)}
+              value={firstName}
+              onChange={(event) => setFirstName(event.target.value)}
+            />
+          </div>
+          <div>
+            <label htmlFor="lastName" className="block text-sm font-semibold text-gray-700">
+              Apellidos
+            </label>
+            <input
+              id="lastName"
+              className="w-full border rounded-xl p-3 mt-1"
+              placeholder="Tus apellidos"
+              autoComplete="family-name"
+              required
+              value={lastName}
+              onChange={(event) => setLastName(event.target.value)}
             />
           </div>
           <div>
@@ -156,86 +172,23 @@ export default function CollaborateDonate({ meta }: { meta?: any }) {
               placeholder="nombre@ejemplo.com"
               type="email"
               autoComplete="email"
+              required
               value={email}
               onChange={(event) => setEmail(event.target.value)}
             />
           </div>
           <div>
             <label htmlFor="donorPhone" className="block text-sm font-semibold text-gray-700">
-              Teléfono (opcional)
+              Teléfono
             </label>
             <input
               id="donorPhone"
               className="w-full border rounded-xl p-3 mt-1"
-              placeholder="+34 600 000 000"
+              placeholder="+255 700 000 000"
               autoComplete="tel"
+              required
               value={phone}
               onChange={(event) => setPhone(event.target.value)}
-            />
-          </div>
-          <div className="grid gap-4 md:grid-cols-2">
-            <div>
-              <label htmlFor="amount" className="block text-sm font-semibold text-gray-700">
-                Importe a donar (€)
-              </label>
-              <input
-                id="amount"
-                className="w-full border rounded-xl p-3 mt-1"
-                type="number"
-                min="5"
-                step="5"
-                placeholder="Ej. 30"
-                required
-                value={amount}
-                onChange={(event) => setAmount(event.target.value)}
-              />
-            </div>
-            <div>
-              <label htmlFor="project" className="block text-sm font-semibold text-gray-700">
-                Selección de proyecto (opcional)
-              </label>
-              <select
-                id="project"
-                className="w-full border rounded-xl p-3 mt-1"
-                value={project}
-                onChange={(event) => setProject(event.target.value)}
-              >
-                <option value="">Fondo general</option>
-                <option value="becas">Becas escolares</option>
-                <option value="internado">Internado y alimentación</option>
-                <option value="formacion">Formación docente</option>
-                <option value="infraestructura">Infraestructura educativa</option>
-              </select>
-            </div>
-          </div>
-          <div>
-            <label htmlFor="paymentMethod" className="block text-sm font-semibold text-gray-700">
-              Método de pago
-            </label>
-            <select
-              id="paymentMethod"
-              className="w-full border rounded-xl p-3 mt-1"
-              value={method}
-              onChange={(event) => setMethod(event.target.value)}
-            >
-              {paymentOptions.map((option) => (
-                <option key={option} value={option.toLowerCase()}>
-                  {option}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label htmlFor="dedication" className="block text-sm font-semibold text-gray-700">
-              Comentario o dedicatoria (opcional)
-            </label>
-            <textarea
-              id="dedication"
-              className="w-full border rounded-xl p-3 mt-1"
-              rows={4}
-              placeholder="Comparte el motivo de tu donación"
-              value={dedication}
-              onChange={(event) => setDedication(event.target.value)}
             />
           </div>
           {feedback && (
@@ -249,7 +202,7 @@ export default function CollaborateDonate({ meta }: { meta?: any }) {
             </p>
           )}
           <button className="btn-primary w-full" type="submit" disabled={submitting}>
-            {submitting ? 'Registrando…' : 'Confirmar donación'}
+            {submitting ? 'Registrando…' : 'Enviar solicitud de donación'}
           </button>
         </form>
       </div>

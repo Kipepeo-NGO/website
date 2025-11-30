@@ -1,22 +1,19 @@
-# Environment variables
+node_modules
+dist
+.build
+.cache
+.next
 .env
-
-# Python bytecode
-__pycache__/
-*.py[cod]
-*$py.class
-
-# Django specific
-db.sqlite3
-/staticfiles
-
-# VS Code and system files
-.vscode/
-.DS_Store
-
-# Logs
+.env.*
 *.log
-
-# Node and frontend
-node_modules/
-dist/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+coverage
+.DS_Store
+.idea
+.vscode
+server/prisma/dev.db
+staticfiles
+.DS_Store
