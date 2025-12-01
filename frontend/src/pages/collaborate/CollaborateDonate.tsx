@@ -1,4 +1,5 @@
 import { FormEvent, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { apiFetch } from '@/lib/api';
 import { useSectionScroll } from '@/hooks/useSectionScroll';
 
@@ -112,9 +113,9 @@ export default function CollaborateDonate({ meta }: { meta?: any }) {
               Si quieres seguir el impacto, recibir actualizaciones y formar parte de la comunidad, puedes registrarte
               como donante y te informaremos de todo.
             </p>
-            <a href="/colabora/ser-socio" className="btn-secondary inline-flex w-fit">
+            <Link to="/colabora/ser-socio" className="btn-secondary inline-flex w-fit">
               Hazte socio/a
-            </a>
+            </Link>
           </div>
 
           <div className="card space-y-3">
