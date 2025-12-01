@@ -1,5 +1,7 @@
 import { ReactNode, useEffect, useRef, useState } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faInstagram, faLinkedin, faTiktok } from "@fortawesome/free-brands-svg-icons";
 import Helmet from "@/components/SEO/Helmet";
 import { useAuth } from "@/hooks/useAuth";
 import LocalImg from "@/components/media/LocalImg";
@@ -31,6 +33,12 @@ const NAV_LINKS = [
   { label: "Galería", to: "/galeria" },
   { label: "Blog", to: "/blog" },
   { label: "Contacto", to: "/contacto" },
+];
+
+const SOCIAL_LINKS = [
+  { label: "Instagram", href: "https://www.instagram.com/kipepeo_tanzania/?hl=en", icon: faInstagram },
+  { label: "LinkedIn", href: "https://www.linkedin.com/company/kipepeo-tanzania/", icon: faLinkedin },
+  { label: "TikTok", href: "https://www.tiktok.com/@kipepeo.tanzania", icon: faTiktok },
 ];
 
 export default function MainLayout({ children, meta }: { children: ReactNode; meta: any }) {
@@ -396,17 +404,22 @@ export default function MainLayout({ children, meta }: { children: ReactNode; me
             </div>
             <div>
               <p className="font-semibold">Síguenos</p>
-              <div className="flex gap-3 mt-2">
-                <a href="#" aria-label="Instagram">
-                  Instagram
-                </a>
-                <a href="#" aria-label="Facebook">
-                  Facebook
-                </a>
-                <a href="#" aria-label="TikTok">
-                  TikTok
-                </a>
-              </div>
+              <ul className="flex gap-3 mt-2">
+                {SOCIAL_LINKS.map(({ label, href, icon }) => (
+                  <li key={href}>
+                    <a
+                      href={href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={label}
+                      className="inline-flex items-center gap-1 text-[color:var(--brand-primary)] hover:text-[color:var(--brand-accent)] transition-colors"
+                    >
+                      <FontAwesomeIcon icon={icon} />
+                      <span>{label}</span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
             </div>
           </div>
         </footer>
