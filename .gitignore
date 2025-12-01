@@ -17,3 +17,5 @@ coverage
 server/prisma/dev.db
 staticfiles
 .DS_Store
+*.sqlite3
+db.sqlite3
