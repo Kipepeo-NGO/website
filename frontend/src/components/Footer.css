@@ -29,18 +29,26 @@
 }
 .footer-social {
   flex-direction: row;
-  gap: 1.2rem;
+  gap: 0.8rem;
   margin-bottom: 2rem;
 }
 .footer-social a {
   color: var(--color-primary);
-  font-size: 1.7rem;
-  margin: 0 0.7rem;
-  transition: color 0.2s, transform 0.2s;
+  font-size: 1.4rem;
+  margin: 0;
+  transition: color 0.2s, transform 0.2s, opacity 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  text-decoration: none;
+  background: rgba(255, 255, 255, 0.6);
 }
 .footer-social a:hover {
   color: var(--color-accent);
-  transform: scale(1.15) rotate(-8deg);
+  transform: translateY(-1px);
+  opacity: 0.9;
 }
 .footer-nav {
   flex-direction: row;

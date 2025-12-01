@@ -12,35 +12,42 @@ const navLinks = [
   { name: 'Contacto', path: '/contacto' },
 ];
 
+const socialLinks = [
+  {
+    name: 'Instagram',
+    href: 'https://www.instagram.com/kipepeo_tanzania/?hl=en',
+    icon: faInstagram,
+  },
+  {
+    name: 'LinkedIn',
+    href: 'https://www.linkedin.com/company/kipepeo-tanzania/',
+    icon: faLinkedin,
+  },
+  {
+    name: 'TikTok',
+    href: 'https://www.tiktok.com/@kipepeo.tanzania',
+    icon: faTiktok,
+  },
+];
+
 export default function Footer() {
   return (
     <footer className="footer">
       <div className="footer-content">
         <div className="footer-section footer-social">
-          <a
-            href="https://www.instagram.com/kipepeo_tanzania/?hl=en"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="Instagram"
-          >
-            <FontAwesomeIcon icon={faInstagram} />
-          </a>
-          <a
-            href="https://www.linkedin.com/company/kipepeo-tanzania/"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="LinkedIn"
-          >
-            <FontAwesomeIcon icon={faLinkedin} />
-          </a>
-          <a
-            href="https://www.tiktok.com/@kipepeo.tanzania"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="TikTok"
-          >
-            <FontAwesomeIcon icon={faTiktok} />
-          </a>
+          {socialLinks.map(({ name, href, icon }) => (
+            <a
+              key={name}
+              href={href}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={name}
+              className="footer-social-link"
+            >
+              <FontAwesomeIcon icon={icon} />
+              <span>{name}</span>
+            </a>
+          ))}
         </div>
         <div className="footer-section footer-nav">
           {navLinks.map(link => (
