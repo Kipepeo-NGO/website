@@ -1,15 +1,15 @@
 # Kipepeo Platform – Frontend
 
-React 19 + Vite 7 single-page app for Kipepeo ONG. It now ships with a canonical site map, Helmet-based SEO, lazy-loaded routes, and local image assets (Cloudinary removed).
+React 18 + Vite 7 SPA for Kipepeo ONG. Includes site map–driven routing, Helmet-based SEO, lazy-loaded routes y soporte opcional de Cloudinary para assets.
 
 ## Tech Stack
-- React 19, React Router 7, Vite 7
-- TypeScript-friendly JSX (*.tsx) with path aliases (`@/…`)
-- react-helmet-async for meta/OG/Twitter tags
-- Static assets served from `frontend/public/images`
+- React 18, React Router 7, Vite 7
+- JSX con alias (`@/…`)
+- react-helmet-async para meta/OG/Twitter
+- Assets estáticos en `frontend/public/images` o en Cloudinary vía `VITE_CLOUDINARY_BASE`
 
-## Requirements
-- Node.js ≥ 20 (use `.nvmrc` / `.node-version`)
+## Requisitos
+- Node.js ≥ 20 (usa `.nvmrc` / `.node-version`)
 - npm ≥ 10
 
 ## Getting Started
@@ -72,7 +72,7 @@ frontend/
 Express + Prisma + JWT + Nodemailer lives under `server/`.
 
 ## Tech Stack
-- Node.js 18 (ts-node-dev during development).
+- Node.js 20 (ts-node-dev during development).
 - Prisma ORM targeting PostgreSQL.
 - Nodemailer for transactional emails (Mailhog in dev).
 - JSON Web Tokens (JWT) for auth.
@@ -81,9 +81,8 @@ Express + Prisma + JWT + Nodemailer lives under `server/`.
 ```bash
 cd server
 npm install
-cp .env.example .env   # adjust DATABASE_URL, SMTP, FRONTEND_URL
+cp .env.example .env   # ajusta DATABASE_URL, SMTP, FRONTEND_URL, JWT_SECRET
 npx prisma migrate dev --name init
-npm run seed:admin     # creates loreto@kipepeo.ngo (ADMIN)
 npm run dev            # http://localhost:4000
 ```
 On boot the API verifies the SMTP transport. With Mailhog:
@@ -95,7 +94,7 @@ MAIL_FROM="Kipepeo <no-reply@kipepeo.ngo>"
 Mailhog UI: http://localhost:8026
 
 ## Useful scripts
-- `npm run seed:admin` – idempotent seed for the admin user (`loreto@kipepeo.ngo / Kipepeo1612`).
+- `npm run seed:admin` – crea un usuario admin (ajusta credenciales en el seed antes de usarlo).
 - `npm run prisma:migrate` – run migrations.
 - `npm run prisma:generate` – regenerate Prisma client.
 
