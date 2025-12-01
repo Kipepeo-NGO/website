@@ -26,7 +26,7 @@ export default function Footer() {
             <FontAwesomeIcon icon={faInstagram} />
           </a>
           <a
-            href="https://tz.linkedin.com/company/kipepeo-tanzania"
+            href="https://www.linkedin.com/company/kipepeo-tanzania/"
             target="_blank"
             rel="noopener noreferrer"
             aria-label="LinkedIn"
