@@ -4,12 +4,12 @@ import { faInstagram, faLinkedin, faTiktok } from '@fortawesome/free-brands-svg-
 import { Link } from 'react-router-dom';
 
 const navLinks = [
-  { name: 'Home', path: '/' },
-  { name: 'Immersive Travel', path: '/travel' },
-  { name: 'Volunteering', path: '/volunteering' },
-  { name: 'Projects', path: '/projects' },
-  { name: 'About Us', path: '/about' },
-  { name: 'Contact Us', path: '/contact' },
+  { name: 'Inicio', path: '/' },
+  { name: 'Viaja', path: '/viaja' },
+  { name: 'Colabora', path: '/colabora' },
+  { name: 'Proyectos', path: '/proyectos' },
+  { name: 'Acerca de', path: '/acerca-de' },
+  { name: 'Contacto', path: '/contacto' },
 ];
 
 export default function Footer() {
