@@ -76,6 +76,7 @@ Express + Prisma + JWT + Nodemailer lives under `server/`.
 - Prisma ORM targeting PostgreSQL.
 - Nodemailer for transactional emails (Mailhog in dev).
 - JSON Web Tokens (JWT) for auth.
+- Base de datos: PostgreSQL (usa la `DATABASE_URL` gestionada; no guardes ficheros SQLite en el repo).
 
 ## Getting Started
 ```bash
