@@ -108,7 +108,7 @@ Mailhog UI: http://localhost:8026
 
 ## Flujo recomendado (QA rápido)
 1. Enviar solicitud de voluntariado desde `/colabora/voluntariado`.
-2. Login admin (`loreto@kipepeo.ngo / Kipepeo1612`), ir a `/admin/voluntarios`, aprobar la solicitud.
+2. Login admin (usa las credenciales que configures en el seed), ir a `/admin/voluntarios`, aprobar la solicitud.
 3. Revisar Mailhog → email “Tu acceso a Kipepeo” con enlace a `/registro?email=…&role=…&token=…`.
 4. Completar registro, iniciar sesión y comprobar RBAC (acceso a `/dashboard` y área del rol; `/admin` bloqueado).
 5. Revisar `/admin/personas` → click en el nombre para ver la ficha (perfil + solicitudes + donaciones).

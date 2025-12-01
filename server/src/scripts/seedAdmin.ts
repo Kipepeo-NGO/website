@@ -4,7 +4,8 @@ import { PrismaClient, Role } from '@prisma/client';
 const prisma = new PrismaClient();
 
 async function seedAdmin() {
-  const email = 'loreto@kipepeo.ngo';
+  const email = process.env.SEED_ADMIN_EMAIL || 'admin@example.com';
+  const password = process.env.SEED_ADMIN_PASSWORD || 'change-me-ASAP';
   const existing = await prisma.user.findUnique({ where: { email } });
 
   if (existing) {
@@ -12,13 +13,13 @@ async function seedAdmin() {
     return;
   }
 
-  const hashed = await bcrypt.hash('Kipepeo1612', 10);
+  const hashed = await bcrypt.hash(password, 10);
 
   await prisma.user.create({
     data: {
       email,
-      firstName: 'Loreto',
-      lastName: 'Anguita',
+      firstName: 'Admin',
+      lastName: 'User',
       role: Role.ADMIN,
       password: hashed,
       isActive: true,
