@@ -100,11 +100,14 @@ Mailhog UI: http://localhost:8026
   ```
   SMTP_HOST=smtp.gmail.com
   SMTP_PORT=587
+  SMTP_SECURE=false
+  SMTP_CONNECTION_TIMEOUT=10000
   SMTP_USER=tu-email@kipepeo.ngo
   SMTP_PASS=tu-contraseña-de-aplicacion
   MAIL_FROM="Kipepeo Platform <tu-email@kipepeo.ngo>"
   ```
 - No subas estos valores al repo; configúralos como variables de entorno en tu proveedor.
+- Si usas puerto 465, configura `SMTP_SECURE=true`.
 
 ## Useful scripts
 - `npm run seed:admin` – crea un usuario admin (ajusta credenciales en el seed antes de usarlo).

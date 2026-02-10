@@ -23,6 +23,8 @@ export const env = {
   CONTACT_INBOX: process.env.CONTACT_INBOX ?? 'info@kipepeo.ngo',
   SMTP_HOST: process.env.SMTP_HOST ?? '',
   SMTP_PORT: process.env.SMTP_PORT ? Number(process.env.SMTP_PORT) : undefined,
+  SMTP_SECURE: process.env.SMTP_SECURE === 'true',
+  SMTP_CONNECTION_TIMEOUT: process.env.SMTP_CONNECTION_TIMEOUT ? Number(process.env.SMTP_CONNECTION_TIMEOUT) : 10000,
   SMTP_USER: process.env.SMTP_USER ?? '',
   SMTP_PASS: process.env.SMTP_PASS ?? '',
 };

@@ -8,7 +8,8 @@ const createTransport = () =>
   nodemailer.createTransport({
     host: env.SMTP_HOST,
     port: env.SMTP_PORT || 587,
-    secure: false,
+    secure: env.SMTP_SECURE,
+    connectionTimeout: env.SMTP_CONNECTION_TIMEOUT,
     auth: env.SMTP_USER
       ? {
           user: env.SMTP_USER,
