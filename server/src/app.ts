@@ -6,13 +6,28 @@ import { router } from './routes';
 
 const app = express();
 
-const allowedOrigins = env.FRONTEND_URL.split(',').map((origin) => origin.trim()).filter(Boolean);
+const allowedOrigins = env.FRONTEND_URL.split(',')
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+
+const normalizeOrigin = (value: string) => {
+  try {
+    const url = new URL(value);
+    const hostname = url.hostname.replace(/^www\./i, '');
+    const port = url.port ? `:${url.port}` : '';
+    return `${url.protocol}//${hostname}${port}`;
+  } catch {
+    return value.replace(/\/$/, '').toLowerCase();
+  }
+};
+
+const allowedOriginSet = new Set(allowedOrigins.map(normalizeOrigin));
 
 app.use(
   cors({
     origin: (origin, callback) => {
       if (!origin || allowedOrigins.length === 0) return callback(null, true);
-      if (allowedOrigins.includes(origin)) return callback(null, true);
+      if (allowedOrigins.includes(origin) || allowedOriginSet.has(normalizeOrigin(origin))) return callback(null, true);
       // allow localhost wildcard (port can change)
       if (origin.startsWith('http://localhost') && allowedOrigins.some((o) => o.startsWith('http://localhost'))) {
         return callback(null, true);
