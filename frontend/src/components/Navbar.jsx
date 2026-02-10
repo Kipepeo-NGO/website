@@ -8,11 +8,11 @@ import { faBars } from '@fortawesome/free-solid-svg-icons';
 
 const navLinks = [
   { key: 'home', path: '/' },
-  { key: 'travel', path: '/travel' },
-  { key: 'volunteering', path: '/volunteering' },
-  { key: 'projects', path: '/projects' },
-  { key: 'about', path: '/about' },
-  { key: 'contact', path: '/contact' },
+  { key: 'travel', path: '/viaja' },
+  { key: 'volunteering', path: '/colabora/voluntariado' },
+  { key: 'projects', path: '/proyectos' },
+  { key: 'about', path: '/acerca-de' },
+  { key: 'contact', path: '/contacto' },
 ];
 
 export default function Navbar() {

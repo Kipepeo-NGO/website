@@ -1,4 +1,40 @@
-const API_BASE = import.meta.env.VITE_API_URL?.replace(/\/$/, '') || 'http://localhost:4000/api';
+const DEFAULT_API_BASE = 'http://localhost:4000/api';
+
+function normalizeApiBase(raw: string | undefined): string {
+  const value = raw?.trim();
+  if (!value) return DEFAULT_API_BASE;
+
+  const ensureApiPath = (url: string) => {
+    try {
+      const parsed = new URL(url);
+      if (parsed.pathname === '/' || parsed.pathname === '') {
+        parsed.pathname = '/api';
+      }
+      return parsed.toString().replace(/\/$/, '');
+    } catch {
+      return url.replace(/\/$/, '');
+    }
+  };
+
+  if (/^https?:\/\//i.test(value)) {
+    return ensureApiPath(value);
+  }
+
+  // Handle values like "website-production.up.railway.app" or "/website-production.up.railway.app"
+  const withoutLeadingSlash = value.replace(/^\/+/, '');
+  if (/^[a-z0-9.-]+\.[a-z]{2,}(\/.*)?$/i.test(withoutLeadingSlash)) {
+    return ensureApiPath(`https://${withoutLeadingSlash}`);
+  }
+
+  // Allow relative values while keeping same-origin API.
+  if (value.startsWith('/')) {
+    return `${window.location.origin}${value}`.replace(/\/$/, '');
+  }
+
+  return value.replace(/\/$/, '');
+}
+
+const API_BASE = normalizeApiBase(import.meta.env.VITE_API_URL);
 
 type ApiOptions = RequestInit & { token?: string | null };
 
