@@ -94,6 +94,18 @@ MAIL_FROM="Kipepeo <no-reply@kipepeo.ngo>"
 ```
 Mailhog UI: http://localhost:8026
 
+### SMTP en producción (Gmail/Workspace)
+- Activa 2FA y genera una contraseña de aplicación para el buzón que envía los emails.
+- Rellena en `.env` (o en Railway) las variables:
+  ```
+  SMTP_HOST=smtp.gmail.com
+  SMTP_PORT=587
+  SMTP_USER=tu-email@kipepeo.ngo
+  SMTP_PASS=tu-contraseña-de-aplicacion
+  MAIL_FROM="Kipepeo Platform <tu-email@kipepeo.ngo>"
+  ```
+- No subas estos valores al repo; configúralos como variables de entorno en tu proveedor.
+
 ## Useful scripts
 - `npm run seed:admin` – crea un usuario admin (ajusta credenciales en el seed antes de usarlo).
 - `npm run prisma:migrate` – run migrations.
