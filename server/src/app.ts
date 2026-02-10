@@ -7,17 +7,18 @@ import { router } from './routes';
 const app = express();
 
 const allowedOrigins = env.FRONTEND_URL.split(',')
-  .map((origin) => origin.trim())
+  .map((origin) => origin.trim().replace(/^["']|["']$/g, ''))
   .filter(Boolean);
 
 const normalizeOrigin = (value: string) => {
+  const sanitized = value.trim().replace(/^["']|["']$/g, '');
   try {
-    const url = new URL(value);
+    const url = new URL(sanitized);
     const hostname = url.hostname.replace(/^www\./i, '');
     const port = url.port ? `:${url.port}` : '';
     return `${url.protocol}//${hostname}${port}`;
   } catch {
-    return value.replace(/\/$/, '').toLowerCase();
+    return sanitized.replace(/\/$/, '').toLowerCase();
   }
 };
 
@@ -32,7 +33,8 @@ app.use(
       if (origin.startsWith('http://localhost') && allowedOrigins.some((o) => o.startsWith('http://localhost'))) {
         return callback(null, true);
       }
-      return callback(new Error('Not allowed by CORS'));
+      // Return a normal CORS rejection instead of throwing 500 on preflight.
+      return callback(null, false);
     },
     credentials: true,
   }),
